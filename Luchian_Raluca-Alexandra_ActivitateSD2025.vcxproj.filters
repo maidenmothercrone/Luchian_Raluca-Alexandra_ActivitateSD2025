@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Task1_Structura_si_functii.c">
+    <ClCompile Include="Laborator01-functii.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
