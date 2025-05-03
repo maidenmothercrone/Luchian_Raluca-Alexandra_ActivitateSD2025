@@ -54,33 +54,42 @@ void dezalocare(struct Telefon** vector, int* nrElemente) {
 		for (int i = 0; i < (*nrElemente); i++) {
 			free((*vector)[i].producator);
 		}
-		free(*vector);
 		*vector = NULL;
 		*nrElemente = 0;
 	}
 }
 
 void copiazaTelefoaneScumpe(struct Telefon* vector, char nrElemente, float pretMinim, struct Telefon** vectorNou, int* dimensiune) {
-	struct Telefon* vectorNou = NULL;
 	*dimensiune = 0;
-	for (int i = 0; i < nrElemente; i++) {
-		if (vector[i].pret >= pretMinim){
-			(*dimensiune)++;
-		}
-	};
+	if ((*vectorNou) != NULL) {
+		free(*vectorNou);
+		*vectorNou = NULL;
+		*dimensiune = 0;
+	}
 	*vectorNou = (struct Telefon*)malloc(sizeof(struct Telefon) * (*dimensiune));
-	for (int i = 0; i < (*dimensiune);i++){
-		vectorNou[i] = vector[i];
-		vectorNou[i].producator = (char*)malloc(sizeof(char) * (strlen(vector[i].producator) + 1));
-		strcpy_s(vectorNou[i].producator, strlen(vector[i].producator) + 1, vector[i].producator);
+	int k = 0;
+	for (int i = 0; i < nrElemente;i++){
+		if (vector[i].pret >= pretMinim) {
+			(*dimensiune)++;
+			(*vectorNou)[k] = vector[i];
+			(*vectorNou)[k].producator = (char*)malloc(sizeof(char) * (strlen(vector[i].producator) + 1));
+			strcpy_s((*vectorNou)[k].producator, strlen(vector[i].producator) + 1, vector[i].producator);
+			k++;
+		}
 	}
 }
 
-struct Telefon getPrimulElementConditionat(struct Telefon* vector, int nrElemente, const char* conditie) {
-	//trebuie cautat elementul care indeplineste o conditie
-	//dupa atributul de tip char*. Acesta este returnat.
+struct Telefon getPrimulTelefonByProducator(struct Telefon* vector, int nrElemente, const char* producator) {
 	struct Telefon t;
-	t.id = 1;
+	t.producator = NULL;
+	for (int i = 0;i< nrElemente;i++) {
+		if (strcmp(vector[i].producator, producator)==0) {
+			t = vector[i];
+			t.producator = (char*)malloc(strlen(vector[i].producator) + 1);
+			strcpy_s(t.producator, strlen(vector[i].producator) + 1, vector[i].producator);
+			return t;
+		}
+	}
 
 	return t;
 }
@@ -97,12 +106,32 @@ int main() {
 
 	afisareVector(telefoane, nrTelefoane);
 
-	struct Telefon* telefoaneCopie = copiazaPrimeleNElemente(telefoane, nrTelefoane, 2);
+	struct Telefon* telefoaneCopie = NULL;
+	int nrTelefoaneCopiate = 2;
+	telefoaneCopie=copiazaPrimeleNElemente(telefoane, nrTelefoane, nrTelefoaneCopiate);
+	printf("Telefoane copiate:\n");
+	afisareVector(telefoaneCopie, nrTelefoaneCopiate);
+	dezalocare(&telefoaneCopie, &nrTelefoaneCopiate);
+	afisareVector(telefoaneCopie, nrTelefoaneCopiate);
 
-	afisareVector(telefoaneCopie, 2);
+	//copiaza telefoane scumpe
+	struct Telefon* telefoaneScumpe = NULL;
+	int nrTelefoaneScumpe = 0;
+	copiazaTelefoaneScumpe(telefoane, nrTelefoane, 2000, &telefoaneScumpe, &nrTelefoaneScumpe);
+	printf("Telefoane scumpe: \n");
+	afisareVector(telefoaneScumpe, nrTelefoaneScumpe);
+	dezalocare(&telefoaneScumpe, &nrTelefoaneScumpe);
+	afisareVector(telefoaneScumpe, nrTelefoaneScumpe);
 
+	struct Telefon telefon = getPrimulTelefonByProducator(telefoane, nrTelefoane, "Apple");
+	printf("Telefonul gasit:\n");
+	afisare(telefon);
+	if (telefon.producator != NULL) {
+		free(telefon.producator);
+		telefon.producator = NULL;
+	}
+	
 	dezalocare(&telefoane, &nrTelefoane);
 	afisareVector(telefoane, nrTelefoane);
-
 	return 0;
 }
