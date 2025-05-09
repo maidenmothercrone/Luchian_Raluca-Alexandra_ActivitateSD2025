@@ -142,13 +142,40 @@ void dezalocareLDMasini(ListaDubla* lista) {
 }
 
 float calculeazaPretMediu(ListaDubla lista) {
-	//calculeaza pretul mediu al masinilor din lista.
-	return 0;
+	if (lista.nrNoduri == 0) {
+		return 0;
+	}
+	else {
+		float suma = 0;
+		Nod* p = lista.first;
+		while (p != NULL) {
+			suma += p->masina.pret;
+			p = p->next;
+		}
+
+		return suma / lista.nrNoduri;
+
+	}
 }
 
-void stergeMasinaDupaID(/*lista masini*/ int id) {
-	//sterge masina cu id-ul primit.
-	//tratati situatia ca masina se afla si pe prima pozitie, si pe ultima pozitie
+void stergeMasinaDupaID(ListaDubla* lista, int id) {
+	if (lista->first == NULL) {
+		return;
+	}
+	Nod* p = lista->first;
+	while (p && p->masina.id != id) {
+		p = p->next;
+	}
+	if (p == NULL) {
+		return;
+	}
+	if (p->prev != NULL) {
+		lista->first = p->prev;
+		if(lista->fi)
+	}
+	else {
+		lista->first = p->next;
+	}
 }
 
 char* getNumeSoferMasinaScumpa(/*lista dublu inlantuita*/) {
@@ -162,6 +189,10 @@ int main() {
 	afisareListaMasiniDeLaInceput(lista);
 	printf("\n\n\n Afisare de la sfarsit:\n");
 	afisareListaMasiniDeLaSfarsit(lista);
+
+	printf("\n\n\n Pret mediu: %.2f\n", calculeazaPretMediu(lista));
+
+
 	dezalocareLDMasini(&lista);
 	afisareListaMasiniDeLaInceput(lista);
 
